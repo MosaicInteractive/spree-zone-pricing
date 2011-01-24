@@ -1,7 +1,13 @@
 module Spree::ZonePricing::CheckoutsController
   def self.included(target)
     target.class_eval do
-      address.update_hook :update_zone_prices
+      # default_addresses extension removes the address step,
+      # so we check for it here
+      if !defined?(address)
+        update.before << :update_zone_prices
+      else
+        address.update_hook :update_zone_prices
+      end
     end
   end
 
